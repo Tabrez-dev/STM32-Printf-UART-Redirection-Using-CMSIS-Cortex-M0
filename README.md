@@ -1,4 +1,4 @@
-# Baremetal Printf to UART
+# Baremetal UART Printf Implementation for STM32 (Using Newlib IO Retargeting)
 
 This project demonstrates how to implement a bare-metal `printf` function to output data over UART on an embedded system, specifically for ARM-based microcontrollers.Im using STM32F072RB-DISCOVERY board in this project.
 
