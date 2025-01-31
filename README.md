@@ -1,97 +1,59 @@
-# Baremetal UART Printf Implementation for STM32 (Using Newlib IO Retargeting)
+# Baremetal UART Printf Implementation for STM32 using CMSIS
 
-This project demonstrates how to implement a bare-metal `printf` function to output data over UART on an embedded system, specifically for ARM-based microcontrollers.Im using STM32F072RB-DISCOVERY board in this project.
+## STM32-Printf-UART-Redirection-Using-CMSIS-Cortex-M0
 
-## Project Overview
+This repository demonstrates how to use `printf` redirection over UART on STM32 Cortex-M0 with CMSIS. Follow the steps below to clone and build the project.
 
-In this project, we redirect the `printf()` function to UART to allow for formatted output, thus enabling printf-style debugging. This is achieved through a mechanism called "IO retargeting," which allows us to redirect standard library I/O operations (like `printf()`, `fwrite()`, etc.) to custom low-level functions.
+## Steps to Reproduce
 
-I am using the GNU ARM toolchain, which includes the GCC compiler and the `newlib` C library. `Newlib` is specifically designed for embedded systems and includes implementations for standard C library functions. When our firmware calls a standard C function, such as `strcmp()`, the linker adds the appropriate `newlib` code to our project.
+1. **Clone the Repository:**
 
-In the case of file I/O operations, such as `fopen()` and `fwrite()`, `newlib` calls a set of low-level IO functions, or "syscalls," to perform the required actions. By modifying the `_write()` syscall, we can redirect `printf()` output to UART or any other desired interface.
-
-This project specifically focuses on retargeting `printf()` to UART. The process involves modifying the `_write()` syscall to send the data to a UART interface (UART1 in this case).
-
-### Changes made comapred to previous projects:
-1. **Move hardware abstraction layer (HAL) code to `hal.h`.**
-2. **Move startup code to `startup.c`.**
-3. **Create a `syscalls.c` file for newlib syscalls.**
-4. **Modify the Makefile to include the new files (`syscalls.c`, `startup.c`).**
-
-After organizing the code, we replace `uartWriteBuf()` calls with `printf()` in the main application. By modifying the `_write()` syscall, we can print the diagnostic information to UART, thus enabling easier debugging via serial output.
-
-### Key Code Changes:
-1. **`_write()` syscall implementation**: Redirects `printf()` output to UART1.
-2. **Added missing syscalls**: Stub implementations for syscalls like `_fstat()`, `_close()`, `_read()`, etc., that newlib expects.
-3. **Main function update**: Replaced `uartWriteBuf()` with `printf()` to print formatted messages to UART.
-
-## Setup Instructions
-
-### Prerequisites:
-- ARM toolchain (`arm-none-eabi-gcc`)
-- An ARM-based microcontroller (e.g., STM32)
-- Serial terminal for viewing the output (e.g., `PuTTY`, `Tera Term`, or `minicom`)
-
-### Steps:
-1. **Install ARM Toolchain**:
-   Make sure that the ARM toolchain is installed on your system. You can install it with the following command:
+   Clone the repository to your local machine:
    ```bash
-   sudo apt-get install gcc-arm-none-eabi
+   git clone https://github.com/Tabrez-dev/STM32-Printf-UART-Redirection-Using-CMSIS-Cortex-M0.git
+   cd STM32-Printf-UART-Redirection-Using-CMSIS-Cortex-M0
    ```
 
-2. **Clone the Repository**:
-   Clone this repository to your local machine.
+2. **Clean the Build:**
+
+   Run the following command to clean any previous build files:
    ```bash
-   git clone https://github.com/Tabrez-dev/Baremetal-Printf-to-UART.git
+   make clean
    ```
 
-3. **Build the Project**:
-   Navigate to the project directory and run `make` to build the project:
+3. **Build the Project:**
+
+   Next, build the project using:
    ```bash
-   cd Baremetal-Printf-to-UART
    make build
    ```
+   This will automatically clone any necessary submodules and prepare the project for flashing. 
 
-4. **Flash the Firmware**:
-   Flash the resulting binary (`.bin`) file to your embedded system using your preferred flashing tool (e.g., `OpenOCD`, `ST-Link`, etc.).
+4. **Modify STM32 Header File:**
+
+   After building the project, you need to modify the STM32 header file:
+   - Access the `cmsis_f0/Include/stm32f0xx.h` file using the following command:
+     ```bash
+     vim cmsis_f0/Include/stm32f0xx.h
+     ```
+   - Uncomment the line for the #define STM32F0x2.h series for the board STM32F072RBT6-DISCO or the baord you are working with.
+
+5. **Flashing the Microcontroller:**
+
+   To flash the firmware to your STM32 microcontroller, it's recommended to use the following command:
+   ```bash
+   make jflash
    ```
-   make flash
-   ```
+   This will use J-Link to flash the firmware onto your STM32 device.
 
-6. **Open a Serial Terminal**:
-   Open a serial terminal(like minicom) to observe the output of the `printf` function. The baud rate and other serial settings should match the configuration in your embedded system.
+6. **Debugging (Optional):**
 
-```
-sudo minicom -D /dev/ttyUSB0 -b 115200
+   If you encounter any issues or need to debug, I recommend using the Ozone debugger. It allows you to monitor the execution and troubleshoot any problems during flashing.
 
-```
+   You can start debugging by connecting your J-Link and opening the Ozone debugger with the configuration files.
 
-## Code Structure
+## Notes
 
-- **`main.c`**: Contains the main program, including initialization of the system and UART, and the entry point for the application.
-- **`syscalls.c`**: Contains the custom system call implementations, including the `_write` function for redirecting `printf` output to UART.
-- **`startup.c`**: Handles the startup code, including the initialization of the system and peripherals before `main()` is called.
-- **`hal.h`**: Header file defining hardware abstraction layer functions, typically for UART or other peripherals.
-- **`Makefile`**: Defines build rules, including compilation, linking, and flashing the firmware.
-- **`link.ld`**: The linker script, which specifies memory layout and sections for the application.
-- **`firmware.bin`**: The compiled binary file to be flashed to the embedded system.
-- **`firmware.elf`**: The ELF file containing the compiled code, useful for debugging.
-- **`firmware.elf.map`**: The memory map file generated during the build process, useful for analyzing memory usage.
+- Ensure that the STM32 header file modification is done after cloning and building the repository to ensure proper functionality.
+- If you encounter issues during flashing or debugging, check your connection and ensure the correct STM32 microcontroller model is selected in the header file.
 
-## Custom `_write` Implementation
-
-In this project, the default `printf` function provided by `newlib-nano` is redirected to UART using a custom `_write` function. The `_write` function is responsible for transmitting the characters to the serial interface.
-
-```c
-int _write(int fd,char *ptr, int len){
-(void) fd,(void)ptr, (void)len;
-if(fd==1) uartWriteBuf(UART1, ptr, (size_t) len);
-return -1;
-
-}
-
-```
-
-## How It Works:
-- The `_write` function is called by `printf` whenever data is ready to be printed.
-- The function transmits each character in the string to the UART peripheral using the `uartWriteBuf` function.
