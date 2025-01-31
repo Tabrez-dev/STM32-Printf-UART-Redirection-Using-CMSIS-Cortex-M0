@@ -97,3 +97,7 @@ int mkdir(const char *path,mode_t mode){
     (void) path, (void) mode;
     return -1;
 }
+
+
+void _init(void) {
+}

@@ -1,6 +1,4 @@
-
-
-ENTRY(_reset);
+ENTRY(Reset_Handler);
 /*
  This line tells the linker the value of the "entry point" attribute in the generated ELF header. This is an aid for a debugger (like Ozone, described below) that helps to set a breakpoint at the beginning of the firmware. A debugger does not know about a vector table, so it relies on the ELF header.
  */
@@ -14,8 +12,7 @@ MEMORY {
 _estack     = ORIGIN(sram) + LENGTH(sram);    /* initial stack pointer points to end of SRAM */
 
 SECTIONS {
-
-   .vectors  : { KEEP(*(.vectors)) }   > flash 
+ .vectors  : { KEEP(*(.isr_vector)) }   > flash 
    /*The KEEP directive tells linker to preserve the .vectors section even if no symbols within it are directly referenced in the code 
     
     *Without KEEP, the linker may discard sections it believes are unused to optimize the binary size.
@@ -38,7 +35,7 @@ SECTIONS {
 
     _edata = .;  /* .data section end */
   } > sram AT > flash
-  _srcdata = LOADADDR(.data);
+  _sidata = LOADADDR(.data);
 
     .bss : {
     _sbss = .;              /* .bss section start */
@@ -48,7 +45,8 @@ SECTIONS {
 
     _ebss = .;              /* .bss section end */
   } > sram
-
+  
   _end = .;     /* for cmsis_gcc.h  */
 }
+
 

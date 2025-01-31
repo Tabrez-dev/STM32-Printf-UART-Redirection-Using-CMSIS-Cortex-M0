@@ -1,5 +1,8 @@
 #include "hal.h"
 
+void SystemInit(void) {
+}
+
 int main(void){
     uint16_t led=PIN('C',7);
     gpio_set_mode(led, GPIO_MODE_OUTPUT);
