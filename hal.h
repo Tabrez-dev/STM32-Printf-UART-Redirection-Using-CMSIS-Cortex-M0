@@ -8,7 +8,6 @@
 
 #include "stm32f072xb.h"
 
-#include "core_cm0.h"  // For Cortex-M0 CMSIS functions
 
 #define FREQ 8000000  // HSI clock frequency is 8 MHz by default
 #define BIT(x) (1UL << (x))
