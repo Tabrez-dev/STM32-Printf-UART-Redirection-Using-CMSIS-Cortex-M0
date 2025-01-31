@@ -1,8 +1,6 @@
 # Baremetal UART Printf Implementation for STM32 using CMSIS
 
-## STM32-Printf-UART-Redirection-Using-CMSIS-Cortex-M0
-
-This repository demonstrates how to use `printf` redirection over UART on STM32 Cortex-M0 with CMSIS. Follow the steps below to clone and build the project.
+This repository demonstrates how to use `printf` redirection over UART on STM32F072RBT6-DISCO Cortex-M0 with CMSIS. Follow the steps below to clone and build the project.
 
 ## Steps to Reproduce
 
@@ -33,10 +31,11 @@ This repository demonstrates how to use `printf` redirection over UART on STM32 
 
    After building the project, you need to modify the STM32 header file:
    - Access the `cmsis_f0/Include/stm32f0xx.h` file using the following command:
+     
      ```bash
      vim cmsis_f0/Include/stm32f0xx.h
      ```
-   - Uncomment the line for the #define STM32F0x2.h series for the board STM32F072RBT6-DISCO or the baord you are working with.
+   - Uncomment the line for the #define STM32F072xB.h series for the board STM32F072RBT6-DISCO or the baord you are working with.
 
 5. **Flashing the Microcontroller:**
 
@@ -48,12 +47,8 @@ This repository demonstrates how to use `printf` redirection over UART on STM32 
 
 6. **Debugging (Optional):**
 
-   If you encounter any issues or need to debug, I recommend using the Ozone debugger. It allows you to monitor the execution and troubleshoot any problems during flashing.
+   If you encounter any issues or need to debug, I recommend using the Ozone debugger. It allows you to monitor the execution and troubleshoot any problems.
 
    You can start debugging by connecting your J-Link and opening the Ozone debugger with the configuration files.
 
-## Notes
-
-- Ensure that the STM32 header file modification is done after cloning and building the repository to ensure proper functionality.
-- If you encounter issues during flashing or debugging, check your connection and ensure the correct STM32 microcontroller model is selected in the header file.
 
