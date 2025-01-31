@@ -1,6 +1,6 @@
 # Baremetal UART Printf Implementation for STM32 using CMSIS
 
-# STM32-Printf-UART-Redirection-Using-CMSIS-Cortex-M0
+## STM32-Printf-UART-Redirection-Using-CMSIS-Cortex-M0
 
 This repository demonstrates how to use `printf` redirection over UART on STM32 Cortex-M0 with CMSIS. Follow the steps below to clone and build the project.
 
