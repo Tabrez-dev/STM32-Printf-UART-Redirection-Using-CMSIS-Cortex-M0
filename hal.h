@@ -20,10 +20,6 @@ enum { GPIO_MODE_INPUT, GPIO_MODE_OUTPUT, GPIO_MODE_AF, GPIO_MODE_ANALOG };
 #define UART1 USART1
 
 
-static inline void systick_init(uint32_t ticks) {
-    SysTick_Config(ticks);
-}
-
 
 static inline void spin(volatile uint32_t count){
 
@@ -97,38 +93,6 @@ static inline void uartInit(USART_TypeDef *uart , unsigned long baud){
     uart->BRR = FREQ / baud; 		//Set Baud rate (FREQ is the UART clock frequency) 
     uart->CR1 |= BIT(0) | BIT(2) | BIT(3);//Enable UART, RX, TX
 }
-#if 0
-static inline void uartInit(USART_TypeDef *uart , unsigned long baud) {
-    // Enable GPIOA Clock
-    RCC->AHBENR |= BIT(17);  // GPIOA Enable
-
-    // Enable UART1 Clock
-    RCC->APB2ENR |= BIT(14); // USART1 Enable
-
-    // Set PA9 & PA10 to Alternate Function mode
-    GPIOA->MODER &= ~(3U << (9 * 2));  // Clear PA9 Mode
-    GPIOA->MODER |= (2U << (9 * 2));   // Set PA9 to AF Mode
-
-    GPIOA->MODER &= ~(3U << (10 * 2)); // Clear PA10 Mode
-    GPIOA->MODER |= (2U << (10 * 2));  // Set PA10 to AF Mode
-
-    // Set Alternate Function AF1 for PA9 and PA10
-    GPIOA->AFR[1] &= ~((uint32_t)0xF << ((9 - 8) * 4));  // Clear AF9
-    GPIOA->AFR[1] |=  ((uint32_t)1  << ((9 - 8) * 4));  // Set AF9 = AF1
-
-    GPIOA->AFR[1] &= ~((uint32_t)0xF << ((10 - 8) * 4)); // Clear AF10
-    GPIOA->AFR[1] |=  ((uint32_t)1  << ((10 - 8) * 4));  // Set AF10 = AF1
-
-    // Disable USART before configuring
-    uart->CR1 = 0;
-
-    // Set Baud Rate
-    uart->BRR = (FREQ / baud);
-
-    // Enable USART, TX, RX
-    uart->CR1 |= BIT(0) | BIT(2) | BIT(3);
-}
-#endif
 
 //Check if UART RX data is ready
 static inline int uartReadReady(USART_TypeDef *uart){
